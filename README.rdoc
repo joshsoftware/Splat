@@ -1,4 +1,4 @@
-== SPlat - Sms PLATform ==
+ SPlat - Sms PLATform
 
 SPlat is an integration platform to make use of SMS integration really 
 easy. Using this platform has the following advantages:
@@ -12,11 +12,12 @@ easy. Using this platform has the following advantages:
 * SMS bogus gateway for testing.
 * Scheduling SMS for delivery.
 
-=== What SPlat isn't! ===
+What SPlat isn't!
+
 SPlat is not an SMS gateway. You still need to buy a subscription from one
 of the vendors SPlat supports. 
 
-== Note on Patches/Pull Requests
+Note on Patches/Pull Requests
  
 * Fork the project.
 * Make your feature addition or bug fix.

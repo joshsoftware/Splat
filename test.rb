@@ -1,6 +1,6 @@
 
 require 'rubygems'
-require '../lib/splat'
+require 'lib/splat'
 
 number = '+91 9960054954'
 
