@@ -1,0 +1,397 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Partner Engagement Specification</title>
+<style type="text/css">
+<!--
+.style1 {color: #FF0000}
+.style2 {color: #000000}
+body,td,th {
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+}
+body {
+	margin-left: 30px;
+	margin-top: 30px;
+	margin-right: 20px;
+	margin-bottom: 30px;
+}
+-->
+</style>
+</head><body>
+<h1>Partner Engagement Specification</h1>
+<h2>Setup</h2>
+<p>For every partner engagement, the following must be setup correctly for two way communication.</p>
+<ol>
+  <li><strong>Application ID: </strong>An application id must be issued which is unique to the partner.</li>
+  <li><strong>Access Control: </strong>A
+list of user names and passwords for that partner must be established.
+The usernames must be unique across all the partners vMobo supports.</li>
+  <li><strong>Callback Server: </strong>If
+the partner wants push callbacks, a callback URL at the partner end for
+incoming API calls. If the callback URL expects HTTP authentication,
+the user/password must be set during this setup process. There will
+also be a way to poll the server for data in case a callback server is
+not setup or required. </li>
+  <li><strong>SMS Delivery Failure Callback: </strong>If
+a callback server is provided, the partner should provide a different
+URL for SMS delivery errors. Messages that are not delivered are
+available only after 24-48 hours of initial attempt. When such
+information is obtained by the vMobo server, the server will callback
+the delivery status URL with the list of messages that were not
+delivered. If a callback server is not setup, this information will be
+available through the API used for polling.</li>
+  <li><strong>Contact Email: </strong>An error email address for auto email notification for failed callbacks.</li>
+  <li><strong>Keywords: </strong>A
+list of unique keywords need to be created for every partner. Any SMS
+message received with this unique keyword will be forwarded to the
+partner or will be available for polling. If the partner expects
+replies, the message the partner sends has to be accompanied by a
+keyword. vMobo uses this keyword to associate replies to the original
+message. If the partner does not expect a reply, this keyword can be
+omitted.</li>
+</ol>
+<h2>Outgoing API - Single Message Multicast</h2>
+Suitable for sending the same message to one or more recipients.<br>
+<h3>Request URL</h3>
+<p>http://www.vMobo.in/send/v1 </p>
+<p>Only https will be supported. All requests will be POSTed to the
+server. No GET requests will be supported. As newer versions of this
+API are released, the version number in the URL (v1) will be changed.</p>
+<h3>Request Parameters</h3>
+<p>The following request parameters can be POSTed to the vMobo server. </p>
+<p>The query parameters are passed in the POST data block. They still
+take the form argument=value and are properly url encoded. Multiple
+parameters are separated by an ampersand (&amp;). Any arguments that
+are passed in the URL will be ignored. </p>
+<table border="0" cellpadding="10" cellspacing="10" width="900">
+  <tbody><tr bgcolor="#999999">
+    <th scope="col" width="87">Parameter</th>
+    <th scope="col" width="216">Value</th>
+    <th scope="col" width="497">Description</th>
+  </tr>
+  <tr>
+    <td>user</td>
+    <td>string (required)</td>
+    <td>User name that uniquely identifies the partner. This is the username created in the vMobo partner portal.</td>
+  </tr>
+  <tr>
+    <td>app_id</td>
+    <td>string (required)</td>
+    <td>Every partner must obtain an unique app id.</td>
+  </tr>
+  <tr>
+    <td>message</td>
+    <td>string (required)</td>
+    <td>Message to be sent to the recipients. Upto 800 characters maximum.</td>
+  </tr>
+  <tr>
+    <td>recipients</td>
+    <td>string (required)</td>
+    <td>Comma
+separated phone numbers for all the recipients. The phone numbers must
+be normalized to nnnnnnnnnn format (n = 0 - 9, no spaces and no
+hyphens). There can be a maximum of 100 recipients per call. A
+recipient number is unique and can not be repeated within the same
+request. If it repeats, the duplicate numbers will be ignored.</td>
+  </tr>
+  <tr>
+    <td>keyword</td>
+    <td>string (optional)</td>
+    <td><p>Keyword
+that users can reply to. If the user responds with this keyword, the
+response (incoming message) will be co-related to this outgoing
+message. The keyword allows multiple campaigns with the same customer. </p>
+      <p>This keyword can be omitted only if the partner does not expect to receive replies from the customer. </p></td>
+  </tr>
+</tbody></table>
+<h3>Error Codes</h3>
+<p>Following is a list of the HTTP error codes the caller may encounter.</p>
+<table border="0" cellpadding="10" cellspacing="10" width="900">
+  <tbody><tr bgcolor="#999999">
+    <th scope="col" width="151">Code</th>
+    <th scope="col" width="679">Description</th>
+  </tr>
+  <tr>
+    <td>400</td>
+    <td>Bad
+request. The parameters passed to the service did not match as
+expected. The Message should tell you what was missing or incorrect. </td>
+  </tr>
+  <tr>
+    <td>403</td>
+    <td>Forbidden. You do not have permission to access this resource. </td>
+  </tr>
+  <tr>
+    <td>503</td>
+    <td>Service unavailable. An internal problem prevented us from returning data to you. </td>
+  </tr>
+  <tr>
+    <td>500</td>
+    <td>Internal error. In the unlikely event of an internal error, this status code will be returned.</td>
+  </tr>
+</tbody></table>
+<p>For each error, the caller will receive an XML response of the following form:</p>
+<p><code>&lt;error xmlns="urn:vMobo:partner"&gt;<br>
+The following errors were detected:<br>
+&lt;message&gt;error message&lt;/message&gt;<br>
+&lt;/error&gt;</code></p>
+<h3>Success Message</h3>
+<p>Every successful request will return with a HTTP code of 200. If the
+HTTP code was not 200, then it is the burden of the caller to retry.
+The vMobo service will not retry sending the message to receivers. A
+status code of 200 will be returned even if only partial list of
+recipients succeeded. Caller of the service must interpret the response
+and look for failed_recipients and retry those.</p>
+<p>For each successful message, the caller will recieve an XML response of the following form:</p>
+<p><code>&lt;success xmlns="urn:vMobo:partner"&gt;<br>
+The following messages were sent successfully:<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&lt;message&gt;The actual message that was sent&lt;/message&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;successful_recipients&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;recipient
+phone_number="1111111111" transaction_id="Unique transaction id per
+message sent"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/successful_recipients&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;failed_recipients&gt;Comma separated list
+of recipients whose phone numbers were not formatted
+correctly.&lt;/failed_recipients&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;request_id&gt;An unique identifier for this request within the vMobo system&lt;/request_id&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;gateway_status&gt;Any additional message from the gateway provider&lt;/gateway_status&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;keyword&gt;The keyword that was sent with the message&lt;/keyword&gt;<br>
+&lt;/success&gt;</code></p>
+<h2>Outgoing API - Template-driven Multicast</h2>
+Flexible API for sending customizable messages to multiple recipients.<br>
+<h3>Request URL</h3>
+<p>http://www.vMobo.in/bulk_send/v1 </p>
+<p>Only https will be supported. All requests will be POSTed to the
+server. No GET requests will be supported. As newer versions of this
+API are released, the version number in the URL (v1) will be changed.</p>
+<h3>Request Parameters</h3>
+<p>The following request parameters can be POSTed to the vMobo server. </p>
+<p>The query parameters are passed in the POST data block. They still
+take the form argument=value and are properly url encoded. Multiple
+parameters are separated by an ampersand (&amp;). Any arguments that
+are passed in the URL will be ignored. A recipient number is unique and
+can not be repeated within the same request. If it repeats, the
+duplicate numbers will be ignored.</p>
+<table border="0" cellpadding="10" cellspacing="10" width="900">
+  <tbody><tr bgcolor="#999999">
+    <th scope="col" width="87">Parameter</th>
+    <th scope="col" width="216">Value</th>
+    <th scope="col" width="497">Description</th>
+  </tr>
+  <tr>
+    <td>xml_request</td>
+    <td>string (required)</td>
+    <td>XML containing the bulk send request.</td>
+  </tr>
+</tbody></table>
+<p>&nbsp;</p>
+<table border="0" cellpadding="10" cellspacing="10" width="900">
+  <tbody><tr bgcolor="#cccccc">
+    <th scope="col" width="450">XML Request Format</th>
+    <th scope="col" width="450">Example: Template-based message contents</th>
+  </tr>
+  <tr>
+	<td valign="top"><code>
+&lt;request&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;user&gt;<i>user-name</i>&lt;/user&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;app_id&gt;<i>application-id</i>&lt;/app_id&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;message&gt;<i>message-template</i>&lt;/message&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;keyword&gt;<i>optional keyword the user can respond to</i>&lt;/keyword&gt;<br>
+ <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;recipients&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;recipient&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;phone_number&gt;<i>phone-number</i>&lt;/phone_number&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;attributes&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<i>attribute</i>&gt;<i>attribute-value</i>&lt;/<i>attribute</i>&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/attributes&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/recipient&gt;<br>	
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/recipients&gt;<br>
+&lt;/request&gt;<br></code>
+	</td>
+	<td valign="top"><code>
+&lt;request&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;user&gt;<b>testuser</b>&lt;/user&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;app_id&gt;<b>12345abcde6789</b>&lt;/app_id&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;message&gt;<b>&lt;![CDATA[
+Hi &lt;%= salutation %&gt; &lt;%= last_name %&gt;, have a nice day.]]&gt;</b>&lt;/message&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;keyword&gt;<strong>festival</strong>&lt;/keyword&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;recipients&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;recipient&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;phone_number&gt;<b>9876511111</b>&lt;/phone_number&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;attributes&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<b>last_name</b>&gt;<b>Smith</b>&lt;/<b>last_name</b>&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<b>salutation</b>&gt;<b>Mr.</b>&lt;/<b>salutation</b>&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/attributes&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/recipient&gt;<br>	
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;recipient&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;phone_number&gt;<b>9876522222</b>&lt;/phone_number&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;attributes&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<b>last_name</b>&gt;<b>Jones</b>&lt;/<b>last_name</b>&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<b>salutation</b>&gt;<b>Ms.</b>&lt;/<b>salutation</b>&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/attributes&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/recipient&gt;<br>	
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/recipients&gt;<br>
+&lt;/request&gt;<br></code>
+	</td>
+  </tr>
+  <tr>
+    <th scope="col" width="450"></th>
+    <th scope="col" bgcolor="#cccccc" width="450">Example: Per-recipient message contents</th>
+  </tr>
+  <tr>
+	<td valign="top">
+	</td>
+	<td valign="top"><code>
+&lt;request&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;user&gt;<b>testuser</b>&lt;/user&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;app_id&gt;<b>12345abcde6789</b>&lt;/app_id&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;message&gt;<b>&lt;![CDATA[
+&lt;%= custom_message %&gt;]]&gt;</b>&lt;/message&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;keyword&gt;<strong>festival</strong>&lt;/keyword&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;recipients&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;recipient&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;phone_number&gt;<b>9876511111</b>&lt;/phone_number&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;attributes&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<b>custom_message</b>&gt;<b>Good morning Mr. Smith.</b>&lt;/<b>custom_message</b>&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/attributes&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/recipient&gt;<br>	
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;recipient&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;phone_number&gt;<b>9876522222</b>&lt;/phone_number&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;attributes&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<b>custom_message</b>&gt;<b>Buon Giorno Ms Jones!</b>&lt;/<b>custom_message</b>&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/attributes&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/recipient&gt;<br>	
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/recipients&gt;<br>
+&lt;/request&gt;<br></code>
+	</td>
+  </tr>
+  <tr>
+    <th scope="col" width="450"></th>
+    <th scope="col" bgcolor="#cccccc" width="450">Example: Fixed message contents</th>
+  </tr>
+  <tr>
+	<td valign="top">
+	</td>
+	<td valign="top"><code>
+&lt;request&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;user&gt;<b>testuser</b>&lt;/user&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;app_id&gt;<b>12345abcde6789</b>&lt;/app_id&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;message&gt;<b>Good morning loyal customer!</b>&lt;/message&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;keyword&gt;<b>festival</b>&lt;/keyword&gt;<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;recipients&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;recipient&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;phone_number&gt;<b>9876511111</b>&lt;/phone_number&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/recipient&gt;<br>	
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;recipient&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;phone_number&gt;<b>9876522222</b>&lt;/phone_number&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/recipient&gt;<br>	
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/recipients&gt;<br>
+&lt;/request&gt;<br></code>
+	</td>
+  </tr>
+</tbody></table>
+<h3>Error Codes</h3>
+<p>Following is a list of the HTTP error codes the caller may encounter.</p>
+<table border="0" cellpadding="10" cellspacing="10" width="900">
+  <tbody><tr bgcolor="#999999">
+    <th scope="col" width="151">Code</th>
+    <th scope="col" width="679">Description</th>
+  </tr>
+  <tr>
+    <td>400</td>
+    <td>Bad
+request. The parameters passed to the service did not match as
+expected. The Message should tell you what was missing or incorrect. </td>
+  </tr>
+  <tr>
+    <td>403</td>
+    <td>Forbidden. You do not have permission to access this resource. </td>
+  </tr>
+  <tr>
+    <td>503</td>
+    <td>Service unavailable. An internal problem prevented us from returning data to you. </td>
+  </tr>
+  <tr>
+    <td>500</td>
+    <td>Internal error. In the unlikely event of an internal error, this status code will be returned.</td>
+  </tr>
+</tbody></table>
+<p>For each error, the caller will receive an XML response of the following form:</p>
+<p><code>&lt;error xmlns="urn:vMobo:partner"&gt;<br>
+The following errors were detected:<br>
+&lt;message&gt;error message&lt;/message&gt;<br>
+&lt;/error&gt;</code></p>
+<h3>Success Message</h3>
+<p>Every successful request will return with a HTTP code of 200. If the
+HTTP code was not 200, then it is the burden of the caller to retry.
+The vMobo service will not retry sending the message to receivers. A
+status code of 200 will be returned even if only partial list of
+recipients succeeded. Caller of the service must interpret the response
+and look for failed_recipients and retry those.</p>
+<p>For each successful message, the caller will recieve an XML response of the following form:</p>
+<p><code>&lt;success xmlns="urn:vMobo:partner"&gt;<br>
+The following messages were sent successfully:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;message&gt;The actual message that was sent&lt;/message&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;successful_recipients&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;recipient
+phone_number="1111111111" transaction_id="Unique transaction id per
+message sent"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/successful_recipients&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;failed_recipients&gt;Comma separated list
+of recipients whose phone numbers were not formatted
+correctly.&lt;/failed_recipients&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;request_id&gt;An unique identifier for this request within the vMobo system&lt;/transaction_id&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;gateway_status&gt;Any additional message from the gateway provider&lt;/gateway_status&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&lt;keyword&gt;The keyword that was sent with the message&lt;/keyword&gt;<br>
+&lt;/success&gt;</code></p>
+
+
+<h2>Callback API</h2>
+<p>End users can send a message back to the partners by using the vMobo
+short code. The SMS message to vMobo will be of the following form:</p>
+<p><code>[keyword] message</code></p>
+<p>Each partner reserves a set of keywords during the setup process.
+The keyword is unique across the vMobo backend and all the partners
+vMobo supports. The message can be any string. vMobo does not interpret
+the message in any way and simply relays the message back to the
+partner. </p>
+<p>The keyword was what the caller of the outgoing message sent as part
+of the outgoing request. It is the burden of the outgoing message
+caller to instruct the consumer of the message about the return format.
+The keyword is mandatory for all incoming messages.</p>
+<h3>Matching the incoming and outgoing messages</h3>
+<p>The keyword is used to match the incoming message to its
+corresponding outgoing message. When a partner calls the API to send an
+outgoing message, they must specify a keyword. The outgoing message
+also has instructions on how to respond with that keyword. When the
+vMobo server receives an incoming message, the server extracts the
+keyword from the response and tries to match the last outgoing message
+with that keyword. </p>
+<h3>Incoming messages</h3>
+<p>vMobo will callback the partner URL registered during the setup process with the following XML message as a POST message. </p>
+<p><code>&lt;message xmlns="urn:vMobo:partner"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The following message was sent by an end user:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;message&gt;The actual message that was sent&lt;/message&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;keyword&gt;Keyword used by the user&lt;/keyword&gt;<br>
+</code><code>&nbsp;&nbsp;&nbsp;&nbsp;&lt;response_time&gt;Time at which vMobo received the message&lt;/response_time&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;outgoing_time&gt;Time at which vMobo sent the outgoing message&lt;/outgoing_time&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;transaction_id&gt;The matching outgoing request's transaction_id&lt;/transaction_id&gt;<br>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&lt;request_id&gt;The matching outgoing request's request_id&lt;/request_id&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;phone&gt;Phone number of the sender&lt;/phone&gt;<br>
+  &lt;/message&gt;</code></p>
+<h3>Status report (only failed messages)</h3>
+<p>If a callback URL is setup for undelivered messages, the following
+XML response would be called back for every undelivered message.</p>
+<p><code>&lt;failure xmlns="urn:vMobo:partner"&gt;<br>
+  The following messages were not sent successfully:<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;failed_recipients&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;recipient phone_number="1111111111" <span class="style2">transaction_id="Unique transaction id per message sent" request_id="Request id this message was part of"</span> message="Actual message sent"/&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;/failed_recipients&gt;<br>
+  &lt;/failure&gt;</code></p>
+</body></html>

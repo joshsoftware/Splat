@@ -1,0 +1,46 @@
+body {
+	margin: 20;
+	padding: 20;
+  border-style:solid;
+  border-color:#0000ff;
+}
+	
+/*
+body {
+	background-color:#1A1A1A;
+	color:#FFFFFF;
+	font-family:Arial,Helvetica,sans-serif;
+  border-style:solid;
+}
+*/
+
+.logo-link {
+  position: absolute;
+  top: 22px;
+  left: 160px;
+  width: 180px;
+  height: 122px;
+  background-color: transparent;
+  border-style:solid;
+}
+
+.box {
+	display: table;
+	margin: 30px auto 0 auto;
+	padding: 20px;
+	font-size: 12px;
+	line-height: 18px;
+  background-color:lightBlue;
+}
+	
+.splat {
+  color: red;
+}
+
+.highlight {
+  color:red;
+}
+
+img {
+  float: center;
+}

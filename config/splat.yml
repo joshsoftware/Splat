@@ -1,0 +1,32 @@
+
+# Mobile number formats varies from vendor to vendor. 
+# To resolve this, SPlat splits country_code and mobile number.
+# The default format is: +<country code><single white space><mobile number.
+# 
+# Its quite possible that you may require to use the before_send hook to
+# manipulate the number format. 
+#
+# At your own risk, update the regex for default_number_format if you know
+# what you are doing.
+#default_number_format: '^\+\d{1,4}\ \d{8,12}$'  # +91 9812345867
+
+
+# By default SPlat will try 5 times to send an SMS on failure.
+#retries: 5
+
+# Default insertion is a means to work-around incomplete string insertions.
+# This can be overridden using the options parameter.
+#use_default_insertion: true
+#default_insertion: ""
+
+
+default:
+  number_format: '^\+\d{1,4}\ \d{8,12}$'  # +91 9812345867
+  retries: 5
+  use_default_insertion: true
+  default_insertion: ""
+
+bogus_gateway:
+  provider_url: "http//test.com"
+  username: test
+  password: test

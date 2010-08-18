@@ -1,0 +1,8 @@
+{ "name": "SPlat", 
+  "sections": [ 
+    { "section": "intro" },
+    { "section": "details" },
+    { "section": "demo" },
+    { "section": "future" }
+  ]
+}
