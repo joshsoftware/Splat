@@ -1,0 +1,19 @@
+
+vmobo:
+  provider_url: 'http://www.vMobo.in/bulk_send/v1'
+  username: 
+  api_key: 
+  keyword: 
+
+bulksmspune:
+  provider_url: 'http://www.bulksmspune.mobi/sendurlcomma.asp'
+  username: 
+  password: 
+  senderid: 
+
+clickatell:
+  provider_url: 'http://api.clickatell.com'
+  api_key:  
+  username: 
+  password: 
+  

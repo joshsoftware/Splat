@@ -10,11 +10,22 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Gautam Rege"]
   s.date = %q{2010-07-13}
-  s.description = %q{TODO: longer description of your gem}
-  s.email = %q{gautam@joshsoftware.com}
+  s.description = %q{
+    SPlat is an integration platform to make use of SMS integration really
+    easy. Using this platform has the following advantages:
+
+      * Single point of integration
+      * Change vendors without changing code.
+      * Send and receive SMS.
+      * Generic Exception Handling.
+      * Standardized reports.
+      * SMS tagged user groups.
+      * SMS bogus gateway for testing.
+      * Scheduling SMS for delivery.
+  }
+  s.email = %q{info@joshsoftware.com}
   s.extra_rdoc_files = [
     "LICENSE",
-     "README.md",
      "README.rdoc"
   ]
   s.files = [
@@ -25,16 +36,44 @@ Gem::Specification.new do |s|
      "Rakefile",
      "VERSION",
      "test/helper.rb",
-     "test/test_splat.rb"
+     "test/test_splat.rb",
+     "generators",
+     "generators/splat_generator.rb",
+     "generators/templates",
+     "generators/templates/config",
+     "generators/templates/config/splat.yml",
+     "generators/templates/config/vendors.yml",
+     "install.rb",
+     "lib/splat/configuration.rb",
+     "lib/splat/error.rb",
+     "lib/splat/gateway.rb",
+     "lib/splat/initializer.rb",
+     "lib/splat/insertion.rb",
+     "lib/splat/request.rb",
+     "lib/splat/response.rb",
+     "lib/splat/utils.rb",
+     "lib/splat/validator.rb",
+     "lib/splat/vendors/bulksmspune",
+     "lib/splat/vendors/bulksmspune/bulksmspune_gateway.rb",
+     "lib/splat/vendors/clickatell",
+     "lib/splat/vendors/clickatell/clickatell_gateway.rb",
+     "lib/splat/vendors/vmobo",
+     "lib/splat/vendors/vmobo/vmobo_gateway.rb",
+     "lib/splat/vendors/vmobo/xml",
+     "lib/splat/vendors/vmobo/xml/schema",
+     "lib/splat/vendors/vmobo/xml/schema/vmobo.xsd",
+     "lib/splat/vendors/vmobo/xml/schema.rb",
+     "lib/splat.rb",
+     "test.rb"
   ]
   s.homepage = %q{http://github.com/gautamrege/splat}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.5}
-  s.summary = %q{TODO: one-line summary of your gem}
+  s.summary = %q{SPlat is an integration platform to make use of SMS integration really easy}
   s.test_files = [
     "test/helper.rb",
-     "test/test_splat.rb"
+    "test/test_splat.rb"
   ]
 
   if s.respond_to? :specification_version then

@@ -97,7 +97,6 @@ module Splat
 
     def http_get(url)
       response = Net::HTTP.get URI.parse(url)               
-      p response
       response
     end
 
