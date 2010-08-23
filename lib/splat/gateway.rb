@@ -1,4 +1,5 @@
 
+require 'net/http'
 require File.dirname(__FILE__) + '/configuration'
 require File.dirname(__FILE__) + '/utils'
 require File.dirname(__FILE__) + '/insertion'
