@@ -1,8 +1,9 @@
 class SplatGenerator < Rails::Generator::Base
+
   def manifest
     record do |m|
-      m.file 'config/splat.yml',    'config/facebooker.yml'
-      m.file 'config/vendors.yml',  'config/vendors.yml'
+      m.file 'splat.yml',    'config/splat.yml'
+      m.file 'vendors.yml',  'config/vendors.yml'
     end
   end
 

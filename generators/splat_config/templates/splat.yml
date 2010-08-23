@@ -26,7 +26,3 @@ default:
   use_default_insertion: true
   default_insertion: ""
 
-bogus_gateway:
-  provider_url: "http//test.com"
-  username: test
-  password: test
