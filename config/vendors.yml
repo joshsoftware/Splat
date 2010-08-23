@@ -6,13 +6,17 @@ vmobo:
   keyword: 
 
 bulksmspune:
-  provider_url: "http://www.bulksmspune.mobi/sendurlcomma.asp"
+  provider_url: 'http://www.bulksmspune.mobi/sendurlcomma.asp'
   username: 
   password: 
   senderid: 
 
 clickatell:
-  api_key:
-  username:
-  password:
+  provider_url: 'http://api.clickatell.com'
+  api_key:  3255022
+  username: 'jirenpatel'
+  password: 'jp12345'
+  #api_key:  3255051  # 3255022
+  #username: 'gautamrege'  #'jirenpatel'
+  #password: 'grege123'    #'jp12345'
   
