@@ -4,19 +4,18 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{splat}
-  s.version = "0.0.1"
+  s.name = %q{josh-splat}
+  s.version = "0.0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Gautam Rege"]
   s.date = %q{2010-07-13}
   s.description = %q{
-    SPlat is an integration platform to make use of SMS integration really
-    easy. Using this platform has the following advantages:
+    SPlat is an integration platform to make use of SMS integration really easy. Using this platform has the following advantages:
 
       * Single point of integration
       * Change vendors without changing code.
-      * Send and receive SMS.
+      * Send and receive SMS. 
       * Generic Exception Handling.
       * Standardized reports.
       * SMS tagged user groups.
