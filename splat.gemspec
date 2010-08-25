@@ -5,10 +5,10 @@
 
 Gem::Specification.new do |s|
   s.name = %q{josh-splat}
-  s.version = "0.0.2"
+  s.version = "0.0.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Gautam Rege"]
+  s.authors = ["Gautam Rege", "Jiren Patel", "Sethupathi Asokan"]
   s.date = %q{2010-07-13}
   s.description = %q{
     SPlat is an integration platform to make use of SMS integration really easy. Using this platform has the following advantages:
@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.email = %q{info@joshsoftware.com}
   s.extra_rdoc_files = [
     "LICENSE",
-     "README.rdoc"
+    "README.rdoc"
   ]
   s.files = [
     ".document",
@@ -62,7 +62,7 @@ Gem::Specification.new do |s|
      "lib/splat.rb",
      "test.rb"
   ]
-  s.homepage = %q{http://github.com/gautamrege/splat}
+  s.homepage = %q{http://github.com/joshsoftware/Splat}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.5}

@@ -13,10 +13,13 @@ bulksmspune:
 
 clickatell:
   provider_url: 'http://api.clickatell.com'
-  api_key:  3255022
-  username: 'jirenpatel'
-  password: 'jp12345'
-  #api_key:  3255051  # 3255022
-  #username: 'gautamrege'  #'jirenpatel'
-  #password: 'grege123'    #'jp12345'
+  api_key:  
+  username: 
+  password: 
   
+twilio:
+  provider_url: 'https://api.twilio.com'
+  account_sid: 
+  auth_token: 
+  api_version: '2008-08-01'
+  phone_number: 
