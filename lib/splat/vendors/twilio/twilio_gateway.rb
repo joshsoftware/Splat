@@ -23,8 +23,8 @@ module Splat
     end
  
     def send_sms(message, number, options = {})
-       options[:response].message =  call_service(message, number)
-       options[:response]
+      options[:response].add(number, call_service(message, number))
+      options[:response]
     end
 
     def send_bulk_sms(message, numbers, options = {})
@@ -56,14 +56,13 @@ module Splat
                              'From' => @phone_number, 
                              'Body' => message })
 
-      response = http.request(request)
-      xml_obj = XSD::Mapping.xml2obj(response.body)
+      response = XSD::Mapping.xml2obj(http.request(request).body)
 
-      if xml_obj.RestException
-        return xml_obj.RestException.message
+      if response.RestException
+        return response.RestException.message
       end
 
-      xml_obj.SMSMessage.status
+      response.SMSMessage.status
 
     end
 

@@ -16,7 +16,7 @@ module Splat
     end
  
     def send_sms(message, number, options = {})
-       options[:response].message =  call_service(message, parse_number(number))
+      options[:response].add(number, call_service(message, parse_number(number)))
        options[:response]
     end
 
