@@ -50,7 +50,7 @@ end
 class SMSMessage
   @@schema_type = "SMSMessage"
   @@schema_ns = nil
-  @@schema_element = [["sid", ["SOAP::SOAPString", XSD::QName.new(nil, "Sid")]], ["dateCreated", ["SOAP::SOAPString", XSD::QName.new(nil, "DateCreated")]], ["dateUpdated", ["SOAP::SOAPString", XSD::QName.new(nil, "DateUpdated")]], ["dateSent", ["SOAP::SOAPString", XSD::QName.new(nil, "DateSent")]], ["accountSid", ["SOAP::SOAPString", XSD::QName.new(nil, "AccountSid")]], ["to", ["SOAP::SOAPString", XSD::QName.new(nil, "To")]], ["from", ["SOAP::SOAPString", XSD::QName.new(nil, "From")]], ["body", ["SOAP::SOAPString", XSD::QName.new(nil, "Body")]], ["status", ["SOAP::SOAPString", XSD::QName.new(nil, "Status")]], ["flags", ["SOAP::SOAPString", XSD::QName.new(nil, "Flags")]]]
+  @@schema_element = [["sid", ["SOAP::SOAPString", XSD::QName.new(nil, "Sid")]], ["dateCreated", ["SOAP::SOAPString", XSD::QName.new(nil, "DateCreated")]], ["dateUpdated", ["SOAP::SOAPString", XSD::QName.new(nil, "DateUpdated")]], ["dateSent", ["SOAP::SOAPString", XSD::QName.new(nil, "DateSent")]], ["accountSid", ["SOAP::SOAPString", XSD::QName.new(nil, "AccountSid")]], ["to", ["SOAP::SOAPString", XSD::QName.new(nil, "To")]], ["from", ["SOAP::SOAPString", XSD::QName.new(nil, "From")]], ["body", ["SOAP::SOAPString", XSD::QName.new(nil, "Body")]], ["status", ["SOAP::SOAPString", XSD::QName.new(nil, "Status")]], ["flags", ["SOAP::SOAPString", XSD::QName.new(nil, "Flags")]], ["price", ["SOAP::SOAPString", XSD::QName.new(nil, "Price")]]]
 
   def Sid
     @sid
@@ -132,7 +132,15 @@ class SMSMessage
     @flags = value
   end
 
-  def initialize(sid = nil, dateCreated = nil, dateUpdated = nil, dateSent = nil, accountSid = nil, to = nil, from = nil, body = nil, status = nil, flags = nil)
+  def Price
+    @price
+  end
+
+  def Price=(value)
+    @price = value
+  end
+
+  def initialize(sid = nil, dateCreated = nil, dateUpdated = nil, dateSent = nil, accountSid = nil, to = nil, from = nil, body = nil, status = nil, flags = nil, price = nil)
     @sid = sid
     @dateCreated = dateCreated
     @dateUpdated = dateUpdated
@@ -143,6 +151,7 @@ class SMSMessage
     @body = body
     @status = status
     @flags = flags
+    @price = price
   end
 end
 

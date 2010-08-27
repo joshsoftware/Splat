@@ -22,6 +22,7 @@
       <xs:element name="Body" type="xs:string"/>
       <xs:element name="Status" type="xs:string"/>
       <xs:element name="Flags" type="xs:string"/>
+      <xs:element name="Price" type="xs:string"/>
     </xs:sequence>
   </xs:complexType>
 

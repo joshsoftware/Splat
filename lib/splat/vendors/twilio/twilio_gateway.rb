@@ -56,7 +56,8 @@ module Splat
                              'From' => @phone_number, 
                              'Body' => message })
 
-      response = XSD::Mapping.xml2obj(http.request(request).body)
+      http_response = http.request(request)
+      response = XSD::Mapping.xml2obj(http_response.body)
 
       if response.RestException
         return response.RestException.message

@@ -16,4 +16,11 @@ clickatell:
   api_key:  
   username: 
   password: 
-  
+
+twilio:
+  provider_url: 'https://api.twilio.com'
+  account_sid:
+  auth_token:
+  api_version: '2008-08-01'
+  phone_number: # From mobile number provided by TWILIO.
+
