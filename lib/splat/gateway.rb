@@ -105,7 +105,7 @@ module Splat
 
     def required_config(options = [])
         options.each do |option|
-          raise SplatError.new("'#{option}' not define for '#{@vendor}' in config file") if self.configuration[option.to_s].blank? 
+          raise SplatError.new("'#{option}' not define for '#{@vendor}' in config file") if  self.configuration[option.to_s].nil? || self.configuration[option.to_s].empty? 
         end
     end
 
