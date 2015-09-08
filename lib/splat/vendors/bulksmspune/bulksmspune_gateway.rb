@@ -42,10 +42,6 @@ module Splat
       Net::HTTP.get URI.parse(url)
     end
 
-    def parse_number(number)
-      number.split(' ').last
-    end
-
   end
 
 end
