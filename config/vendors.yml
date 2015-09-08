@@ -1,10 +1,4 @@
 
-vmobo:
-  provider_url: 'http://www.vMobo.in/bulk_send/v1'
-  username: 
-  api_key: 
-  keyword: 
-
 bulksmspune:
   provider_url: 
   username: 
