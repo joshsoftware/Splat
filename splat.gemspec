@@ -28,8 +28,8 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/joshsoftware/Splat}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.add_development_dependency 'bundler'
-  s.add_development_dependency 'rake'
+  s.add_development_dependency 'bundler', '~> 0'
+  s.add_development_dependency 'rake', '~> 0'
   s.summary = %q{SPlat is an integration platform to make use of SMS integration really easy}
   s.test_files = ["test/helper.rb", "test/test_splat.rb"]
   
