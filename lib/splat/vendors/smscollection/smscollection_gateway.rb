@@ -7,25 +7,31 @@ module Splat
 
     def initialize()
       super
-      @send_url = send_url_v2();
+      
+      @send_url = self.config_option(:provider_url)
       self.required_config([:provider_url, :username, :password, :senderid])
     end
  
     def send_sms(message, number, options = {})
-      options[:response].add(number, call_service(message, parse_number(number)))
+      options = options || {}
+      options[:response] = {} 
+      options[:response][number] = call_service(message, parse_number(number))
       options[:response]
     end
 
     def send_bulk_sms(message, numbers, options = {})
       numbers = numbers.join(',')
-      options[:response].message = call_service(message, numbers)
+      options = options || {}
+      options[:response] = {} 
+      options[:response][:message] = call_service(message, numbers)
       options[:response]
     end
    
     private 
 
     def call_service(message, number)
-      url = @send_url.call(message, number)
+      message = message.split().join("+")
+      url = @send_url + send_url_v2().call(message, number)
       Net::HTTP.get URI.parse(url)
     end
 

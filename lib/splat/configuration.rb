@@ -8,7 +8,9 @@ module Splat
     @options = nil
 
     def initialize
+      
       @options = YAML.load_file('config/splat.yml')
+      
       @options = @options.merge YAML.load_file('config/vendors.yml') 
     end
 
