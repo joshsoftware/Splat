@@ -1,4 +1,5 @@
 require 'yaml'
+require 'erb' 
 
 module Splat
 
@@ -9,9 +10,12 @@ module Splat
 
     def initialize
       
-      @options = YAML.load_file('config/splat.yml')
-      
-      @options = @options.merge YAML.load_file('config/vendors.yml') 
+      template = ERB.new File.new("config/splat.yml").read
+      @options = YAML.load(template.result(binding))
+     
+       
+      template = ERB.new File.new("config/vendors.yml").read
+      @options.merge!(YAML.load(template.result(binding)))
     end
 
     def self.instance
